@@ -1,16 +1,16 @@
 <?php
 
-namespace frontend\models;
+namespace app\models;
 
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use frontend\models\Category;
+use app\models\Image;
 
 /**
- * CategorySearch represents the model behind the search form about `app\models\Category`.
+ * ImageSearch represents the model behind the search form about `app\models\Image`.
  */
-class CategorySearch extends Category
+class ImageSearch extends Image
 {
     /**
      * @inheritdoc
@@ -18,8 +18,8 @@ class CategorySearch extends Category
     public function rules()
     {
         return [
-            [['id', 'sort'], 'integer'],
-            [['name', 'alias', 'anons', 'description'], 'safe'],
+            [['id', 'timestamp'], 'integer'],
+            [['type', 'path', 'alt', 'hide'], 'safe'],
         ];
     }
 
@@ -41,7 +41,7 @@ class CategorySearch extends Category
      */
     public function search($params)
     {
-        $query = Category::find();
+        $query = Image::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -53,13 +53,13 @@ class CategorySearch extends Category
 
         $query->andFilterWhere([
             'id' => $this->id,
-            'sort' => $this->sort,
+            'timestamp' => $this->timestamp,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'alias', $this->alias])
-            ->andFilterWhere(['like', 'anons', $this->anons])
-            ->andFilterWhere(['like', 'description', $this->description]);
+        $query->andFilterWhere(['like', 'type', $this->type])
+            ->andFilterWhere(['like', 'path', $this->path])
+            ->andFilterWhere(['like', 'alt', $this->alt])
+            ->andFilterWhere(['like', 'hide', $this->hide]);
 
         return $dataProvider;
     }
