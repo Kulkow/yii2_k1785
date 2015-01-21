@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel frontend\models\NomenclatureSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Nomenclatures');
+$this->title = 'Nomenclatures';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="nomenclature-index">
@@ -16,9 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Create {modelClass}', [
-    'modelClass' => 'Nomenclature',
-]), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Nomenclature', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -29,10 +27,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'name',
-            'category',
+            'alias',
+            'category_id',
             'price',
-            'content:ntext',
-            // 'image',
+            // 'content:ntext',
+            // 'image_id',
+            // 'sort',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

@@ -4,23 +4,21 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Image */
+/* @var $model frontend\models\Category */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="image-form">
+<div class="category-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'type')->textInput(['maxlength' => 255]) ?>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
 
-    <?= $form->field($model, 'path')->textarea(['rows' => 6]) ?>
+    <?= $form->field($model, 'alias')->textInput(['maxlength' => 255]) ?>
 
-    <?= $form->field($model, 'alt')->textarea(['rows' => 6]) ?>
+    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'hide')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'timestamp')->textInput() ?>
+    <?= $form->field($model, 'sort')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

@@ -4,12 +4,10 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Nomenclature */
+/* @var $model frontend\models\Nomenclature */
 
-$this->title = Yii::t('app', 'Create {modelClass}', [
-    'modelClass' => 'Nomenclature',
-]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Nomenclatures'), 'url' => ['index']];
+$this->title = 'Create Nomenclature';
+$this->params['breadcrumbs'][] = ['label' => 'Nomenclatures', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="nomenclature-create">

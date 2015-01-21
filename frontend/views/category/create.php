@@ -2,15 +2,15 @@
 
 use yii\helpers\Html;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\Category */
 
-$this->title = 'Update Category: ' . ' ' . $model->name;
+/* @var $this yii\web\View */
+/* @var $model frontend\models\Category */
+
+$this->title = 'Create Category';
 $this->params['breadcrumbs'][] = ['label' => 'Categories', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="category-update">
+<div class="category-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace app\controllers;
+namespace frontend\controllers;
 
 use Yii;
-use app\models\Image;
-use app\models\ImageSearch;
+use frontend\models\Image;
+use frontend\models\ImageSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
