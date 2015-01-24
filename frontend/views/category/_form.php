@@ -15,6 +15,8 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
 
     <?= $form->field($model, 'alias')->textInput(['maxlength' => 255]) ?>
+    
+    <?= $form->field($model, 'anons')->textarea(['rows' => 3]) ?>
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 

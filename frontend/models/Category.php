@@ -30,7 +30,7 @@ class Category extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'alias', 'description', 'sort'], 'required'],
-            [['description'], 'string'],
+            [['description', 'anons'], 'string'],
             [['sort'], 'integer'],
             [['name', 'alias'], 'string', 'max' => 255]
         ];

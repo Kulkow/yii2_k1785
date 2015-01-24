@@ -15,8 +15,14 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
 
     <?= $form->field($model, 'alias')->textInput(['maxlength' => 255]) ?>
-
-    <?= $form->field($model, 'category_id')->textInput() ?>
+    <?
+    $_i = $model->getCategory();
+    $items = [];
+    foreach($category as $_category){
+        $items[$_category->id] = [$_category->id => $_category->name];
+    }
+     ?>
+    <?= $form->field($model, 'category_id')->dropDownList($items) ?>
 
     <?= $form->field($model, 'price')->textInput(['maxlength' => 255]) ?>
 

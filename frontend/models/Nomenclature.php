@@ -41,6 +41,7 @@ class Nomenclature extends \yii\db\ActiveRecord
             [['name', 'alias', 'price'], 'string', 'max' => 255]
         ];
     }
+    
 
     /**
      * @inheritdoc
