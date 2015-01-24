@@ -9,10 +9,15 @@ use Yii;
  *
  * @property integer $id
  * @property string $name
- * @property integer $category
+ * @property string $alias
+ * @property integer $category_id
  * @property string $price
  * @property string $content
- * @property integer $image
+ * @property integer $image_id
+ * @property integer $sort
+ *
+ * @property Category $category
+ * @property Image $image
  */
 class Nomenclature extends \yii\db\ActiveRecord
 {
@@ -30,11 +35,10 @@ class Nomenclature extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'category', 'price', 'content', 'image'], 'required'],
-            [['category', 'image'], 'integer'],
-            [['price'], 'number'],
+            [['name', 'alias', 'price', 'content'], 'required'],
+            [['category_id', 'image_id', 'sort'], 'integer'],
             [['content'], 'string'],
-            [['name'], 'string', 'max' => 255]
+            [['name', 'alias', 'price'], 'string', 'max' => 255]
         ];
     }
 
@@ -46,10 +50,28 @@ class Nomenclature extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'category' => 'Category',
+            'alias' => 'Alias',
+            'category_id' => 'Category ID',
             'price' => 'Price',
             'content' => 'Content',
-            'image' => 'Image',
+            'image_id' => 'Image ID',
+            'sort' => 'Sort',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategory()
+    {
+        return $this->hasOne(Category::className(), ['id' => 'category_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getImage()
+    {
+        return $this->hasOne(Image::className(), ['id' => 'image_id']);
     }
 }

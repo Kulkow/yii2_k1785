@@ -8,7 +8,7 @@ use yii\data\ActiveDataProvider;
 use frontend\models\Nomenclature;
 
 /**
- * NomenclatureSearch represents the model behind the search form about `app\models\Nomenclature`.
+ * NomenclatureSearch represents the model behind the search form about `frontend\models\Nomenclature`.
  */
 class NomenclatureSearch extends Nomenclature
 {
@@ -18,9 +18,8 @@ class NomenclatureSearch extends Nomenclature
     public function rules()
     {
         return [
-            [['id', 'category', 'image'], 'integer'],
-            [['name', 'content'], 'safe'],
-            [['price'], 'number'],
+            [['id', 'category_id', 'image_id', 'sort'], 'integer'],
+            [['name', 'alias', 'price', 'content'], 'safe'],
         ];
     }
 
@@ -54,12 +53,14 @@ class NomenclatureSearch extends Nomenclature
 
         $query->andFilterWhere([
             'id' => $this->id,
-            'category' => $this->category,
-            'price' => $this->price,
-            'image' => $this->image,
+            'category_id' => $this->category_id,
+            'image_id' => $this->image_id,
+            'sort' => $this->sort,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'alias', $this->alias])
+            ->andFilterWhere(['like', 'price', $this->price])
             ->andFilterWhere(['like', 'content', $this->content]);
 
         return $dataProvider;
