@@ -10,15 +10,14 @@ use yii\widgets\ActiveForm;
 
 <div class="nomenclature-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
 
     <?= $form->field($model, 'alias')->textInput(['maxlength' => 255]) ?>
     <?
-    $_i = $model->getCategory();
     $items = [];
-    foreach($category as $_category){
+    foreach($model->getAllCategory() as $_category){
         $items[$_category->id] = [$_category->id => $_category->name];
     }
      ?>
@@ -28,7 +27,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'image_id')->textInput() ?>
+    <?= $form->field($model, 'image')->fileInput() ?>
 
     <?= $form->field($model, 'sort')->textInput() ?>
 

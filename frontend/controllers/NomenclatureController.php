@@ -10,6 +10,7 @@ use frontend\models\Image;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * NomenclatureController implements the CRUD actions for Nomenclature model.
@@ -63,16 +64,17 @@ class NomenclatureController extends Controller
     public function actionCreate()
     {
         $model = new Nomenclature();
-        $category = Category::find()->all();
-        $images = Image::find()->all();
-
+        if (Yii::$app->request->isPost) {
+            $image = UploadedFile::getInstance($model, 'image');
+            print_r($image);
+           exit();
+        }
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
-                'model' => $model,
-                'category' => $category,
-                'images' => $images
+                'model' => $model
             ]);
         }
     }
@@ -86,16 +88,12 @@ class NomenclatureController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $category = Category::find()->all();
-        $images = Image::find()->all();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
-                'category' => $category,
-                'images' => $images
+                'model' => $model
             ]);
         }
     }

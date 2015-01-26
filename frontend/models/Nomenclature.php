@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "nomenclature".
@@ -36,9 +37,10 @@ class Nomenclature extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'alias', 'price', 'content'], 'required'],
-            [['category_id', 'image_id', 'sort'], 'integer'],
+            [['category_id', 'sort'], 'integer'],
             [['content'], 'string'],
-            [['name', 'alias', 'price'], 'string', 'max' => 255]
+            [['name', 'alias', 'price'], 'string', 'max' => 255],
+            [['image'], 'file'],
         ];
     }
     
@@ -74,5 +76,9 @@ class Nomenclature extends \yii\db\ActiveRecord
     public function getImage()
     {
         return $this->hasOne(Image::className(), ['id' => 'image_id']);
+    }
+    
+    public function getAllCategory(){
+        return Category::find()->all();
     }
 }
