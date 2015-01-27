@@ -67,16 +67,15 @@ class Image extends \yii\db\ActiveRecord
     }
     
     
-    public function upload($target = NULL, $type = NULL)
+    public function upload($file, $target = NULL, $type = NULL)
 	{
-        $model = new Image();
-        $model->file = UploadedFile::getInstance($model, 'file');
-
-        if ($model->file && $model->validate()) {
+        $this->file = $file; //UploadedFile::getInstance($model, 'file');
+        if ($this->file && $this->file->validate()) {
             print_r($model->file);
+            $this->path = 
             //$model->file->saveAs('uploads/' . $model->file->baseName . '.' . $model->file->extension);
         }else{
-            
+            $this->addError('password', 'Incorrect username or password.');
         }
         
         /*$validation = Validation::factory($_FILES)->rules('image', array(
