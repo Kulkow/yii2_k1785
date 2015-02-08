@@ -4,6 +4,10 @@ namespace frontend\models;
 
 use Yii;
 use yii\web\UploadedFile;
+use yii\imagine\BaseImage;
+use yii\helpers\FileHelper;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 
 
 /**
@@ -35,8 +39,8 @@ class Image extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'path', 'alt'], 'required'],
-            [['path', 'alt', 'hide'], 'string'],
+            /*[['type', 'path', 'alt'], 'required'],*/
+            [['path', 'alt', 'hide','ext','realname'], 'string'],
             [['timestamp'], 'integer'],
             [['type'], 'string', 'max' => 255],
             [['file'], 'file','extensions' => 'jpg, png, jpeg, gif'],
@@ -51,6 +55,8 @@ class Image extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'type' => 'Type',
+            'ext' => 'Extension',
+            'realname' => 'Realname',
             'path' => 'Path',
             'alt' => 'Alt',
             'hide' => 'Hide',
@@ -67,16 +73,44 @@ class Image extends \yii\db\ActiveRecord
     }
     
     
-    public function upload($file, $target = NULL, $type = NULL)
+    public function upload($file = 'file', $type = NULL)
 	{
+        $this->file = UploadedFile::getInstance($this, $file);
+        if($this->validate()){
+           // $this->file->saveAs($dir . $model->file->baseName . '.' . $model->file->extension);
+            $this->realname = $this->file->getBaseName();
+            $this->alt = $this->realname;
+            $this->ext = $this->file->getExtension();
+            $this->type = ($type ? $type : '');
+            do
+        	{
+    			$this->path = static::random('hexdec', 3).'/'.static::random('hexdec', 3);
+    		}
+    		while (file_exists($this->_server_path('original')));
+            $this->alt = urldecode($_FILES['image']['name']);
+    		
+    		$this->timestamp = time();
+            FileHelper::createDirectory($this->_server_path(), 0775, TRUE);
+            if (! file_exists($this->_server_path())){
+                exit();
+            }
+            $this->save();
+    		$this->file->saveAs($this->_server_path('original'));
+    		return $this->resize($this->type);
+           
+        }else{
+            return $model->errors;
+        }    
+        /*
         $this->file = $file; //UploadedFile::getInstance($model, 'file');
         if ($this->file && $this->file->validate()) {
             print_r($model->file);
-            $this->path = 
+            $this->path = '';
             //$model->file->saveAs('uploads/' . $model->file->baseName . '.' . $model->file->extension);
         }else{
             $this->addError('password', 'Incorrect username or password.');
         }
+        */
         
         /*$validation = Validation::factory($_FILES)->rules('image', array(
         	array('Upload::valid'),
@@ -120,14 +154,11 @@ class Image extends \yii\db\ActiveRecord
 	public function resize($type = NULL)
 	{
         $type = ! $type ? 'default' : $type;
-        
-        $config = Kohana::$config->load('image');
-        $params = $config->get($type);
-        if(empty($params)){
-            $params = $config->get('default');    
-        }
+        //$config = Kohana::$config->load('image');
+        //$params = $config->get($type);
+        $params = static::config($type);
         if(! empty($params)){
-    		foreach ($params['size'] as $index => $size)
+    		foreach ($params as $index => $size)
     		{
                 $this->_resize($size['name'], $size['width'], $size['height'], $size['quality']);
     		}
@@ -137,10 +168,11 @@ class Image extends \yii\db\ActiveRecord
 
 	protected function _resize($size, $width, $height, $quality)
 	{
-		$image = Image::factory($this->_server_path('original'));
+		/*$image = BaseImage::factory($this->_server_path('original'));
+        $image = BaseImage::open($this->_server_path('original'));
 		if ( ! $height OR $image->width / $width < $image->height / $height)
 		{
-   		    $image->resize($width, $height, Image::WIDTH);
+   		    $image->thumbnail($width, $height, Image::WIDTH);
         }
    		else
    	    {
@@ -150,7 +182,11 @@ class Image extends \yii\db\ActiveRecord
    	    {
 		    $image->crop($width, $height);
 		}
-        $image->save($this->_server_path($size), $quality);
+
+        $image->save($this->_server_path($size), $quality);*/
+        $original = static::_server_path('original', FALSE);
+        $resize = static::_server_path($size);
+        BaseImage::thumbnail($original, $width, $height)->save($resize, ['quality' => $quality]);
 	}
 
 	public function rotate($degrees)
@@ -186,15 +222,14 @@ class Image extends \yii\db\ActiveRecord
 
 	public function unlink_images($type = NULL)
 	{
-        $config = Kohana::$config->load('image');
-        $params = $config->get($type);
-        if(empty($params)){
-            $params = $config->get('default');    
-        }
+        /*$type = ! $type ? 'default' : $type;
+        $params = static::config($type);
         foreach ($params['size'] as $index => $size)
 		{
 			@unlink($this->_server_path($size['name']));
-		}
+		}*/
+        // Или удалить папку что правильней
+        FileHelper::removeDirectory($this->_server_path());
 	}
 
 	public function order_update($gallery, $data)
@@ -214,27 +249,117 @@ class Image extends \yii\db\ActiveRecord
 			$order ++;
 		}
 	}
+    
+    public function getUploadDir($is_server = FALSE){
+        if(! $is_server){
+            return '@webroot/uploads/';
+        }else{
+            return Yii::getAlias('@webroot/uploads/');       
+        }
+    }
 
-	public function url($size = 'image')
+	public function url($size = 'original')
 	{
-		return '/upload/gallery/'.$this->path.'/'.$size.'.jpg?t='.$this->timestamp;
+		return '@web/uploads/'.$this->path.'/'.$size.'.'.$this->ext.'?t='.$this->timestamp;
 	}
 
-	public function render($size = 'image', array $attributes = NULL)
+	public function render($size = 'original', array $attributes = NULL)
 	{
-		if ($this->_loaded)
+		if (! $attributes)
 		{
 			$attributes['alt'] = $this->alt;
 
-			return HTML::image($this->url($size), $attributes);
 		}
-
-		return HTML::image('/upload/gallery/default/'.$size.'.jpg');
+        return Html::img($this->url($size, FALSE),$attributes);
+		/*return HTML::image('/upload/gallery/default/'.$size.'.'.$this->ext);*/
 	}
 
-	protected function _server_path($size = NULL)
+	protected function _server_path($size = NULL, $is_server = TRUE)
 	{
-		return DOCROOT.'/upload/gallery/'.$this->path.($size ? '/'.$size.'.jpg' : '');
+        return $this->getUploadDir($is_server).$this->path.($size ? '/'.$size.'.'.$this->ext : '');
 	}
     
+    protected static function config($type = 'default'){
+        $config = [ 
+                'default' => [
+                         'small' => ['name' => 'small', 'width' => 400, 'height' => 200, 'quality' => 90],
+                         'avatar' => ['name' => 'avatar', 'width' => 100, 'height' => 100, 'quality' => 90],
+                         ]
+        ];
+        if(empty($type)){
+            $type = 'default';
+        }
+        $_config = ArrayHelper::getValue($config, $type);
+        if(empty($_config)){
+            $_config = ArrayHelper::getValue($config, 'default');    
+        }
+        return $_config;
+    }
+    
+    public static function random($type = NULL, $length = 8)
+	{
+		if ($type === NULL)
+		{
+			// Default is to generate an alphanumeric string
+			$type = 'alnum';
+		}
+
+		$utf8 = FALSE;
+
+		switch ($type)
+		{
+			case 'alnum':
+				$pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+			break;
+			case 'alpha':
+				$pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+			break;
+			case 'hexdec':
+				$pool = '0123456789abcdef';
+			break;
+			case 'numeric':
+				$pool = '0123456789';
+			break;
+			case 'nozero':
+				$pool = '123456789';
+			break;
+			case 'distinct':
+				$pool = '2345679ACDEFHJKLMNPRSTUVWXYZ';
+			break;
+			default:
+				$pool = (string) $type;
+				$utf8 = ! UTF8::is_ascii($pool);
+			break;
+		}
+
+		// Split the pool into an array of characters
+		$pool = ($utf8 === TRUE) ? UTF8::str_split($pool, 1) : str_split($pool, 1);
+
+		// Largest pool key
+		$max = count($pool) - 1;
+
+		$str = '';
+		for ($i = 0; $i < $length; $i++)
+		{
+			// Select a random character from the pool and add it to the string
+			$str .= $pool[mt_rand(0, $max)];
+		}
+
+		// Make sure alnum strings contain at least one letter and one digit
+		if ($type === 'alnum' AND $length > 1)
+		{
+			if (ctype_alpha($str))
+			{
+				// Add a random digit
+				$str[mt_rand(0, $length - 1)] = chr(mt_rand(48, 57));
+			}
+			elseif (ctype_digit($str))
+			{
+				// Add a random letter
+				$str[mt_rand(0, $length - 1)] = chr(mt_rand(65, 90));
+			}
+		}
+
+		return $str;
+	}
 }

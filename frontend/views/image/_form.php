@@ -10,8 +10,10 @@ use yii\widgets\ActiveForm;
 
 <div class="image-form">
 
-    <?php $form = ActiveForm::begin(); ?>
-
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]) ?>
+    
+     <?= $form->field($model, 'file')->fileInput() ?>
+    <? if(FALSE): ?>
     <?= $form->field($model, 'type')->textInput(['maxlength' => 255]) ?>
 
     <?= $form->field($model, 'path')->textarea(['rows' => 6]) ?>
@@ -21,7 +23,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'hide')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'timestamp')->textInput() ?>
-
+    <? endif ?>
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'type',
             'path:ntext',
             'alt:ntext',
-            'hide:ntext',
+            //'hide:ntext',
             // 'timestamp:datetime',
 
             ['class' => 'yii\grid\ActionColumn'],

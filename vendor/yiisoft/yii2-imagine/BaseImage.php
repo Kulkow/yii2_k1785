@@ -46,7 +46,8 @@ class BaseImage
      * @var array|string the driver to use. This can be either a single driver name or an array of driver names.
      * If the latter, the first available driver will be used.
      */
-    public static $driver = [self::DRIVER_GMAGICK, self::DRIVER_IMAGICK, self::DRIVER_GD2];
+    //public static $driver = [self::DRIVER_GMAGICK, self::DRIVER_IMAGICK, self::DRIVER_GD2];
+    public static $driver = [self::DRIVER_GD2, self::DRIVER_GMAGICK, self::DRIVER_IMAGICK];
 
     /**
      * @var ImagineInterface instance.

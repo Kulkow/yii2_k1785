@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
-
+    <?= $model->render('avatar'); ?>
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
