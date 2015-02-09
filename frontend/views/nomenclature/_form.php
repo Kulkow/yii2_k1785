@@ -27,7 +27,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'image')->fileInput() ?>
+    <?= $form->field($model->image, 'file')->fileInput() ?>
 
     <?= $form->field($model, 'sort')->textInput() ?>
 

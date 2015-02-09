@@ -64,11 +64,27 @@ class NomenclatureController extends Controller
     public function actionCreate()
     {
         $model = new Nomenclature();
+        $image = new Image();
+        $model->image = $image; 
         if (Yii::$app->request->isPost) {
-            $image = UploadedFile::getInstance($model, 'image');
-            print_r($image);
-           exit();
+           
+           $model->load(Yii::$app->request->post());
+           if($model->validate()){
+             $image->upload('file');
+             if(! $image->errors){
+                $model->image_id = $image->id;
+                $model->save();
+                return $this->redirect(['view', 'id' => $model->id]);
+             }else{
+                print_r($image->errors);
+             }
+             
+           }
         }
+        return $this->render('create', [
+                'model' => $model
+            ]);
+            /*
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             
             return $this->redirect(['view', 'id' => $model->id]);
@@ -76,7 +92,7 @@ class NomenclatureController extends Controller
             return $this->render('create', [
                 'model' => $model
             ]);
-        }
+        }*/
     }
 
     /**

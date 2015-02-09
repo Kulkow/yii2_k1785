@@ -43,7 +43,7 @@ class Image extends \yii\db\ActiveRecord
             [['path', 'alt', 'hide','ext','realname'], 'string'],
             [['timestamp'], 'integer'],
             [['type'], 'string', 'max' => 255],
-            [['file'], 'file','extensions' => 'jpg, png, jpeg, gif'],
+            [['file'], 'file','extensions' => 'jpg, png, jpeg, gif','skipOnEmpty' => false],
         ];
     }
 
@@ -73,9 +73,12 @@ class Image extends \yii\db\ActiveRecord
     }
     
     
-    public function upload($file = 'file', $type = NULL)
+    public function upload($file = 'file', $rules = array(), $type = NULL)
 	{
         $this->file = UploadedFile::getInstance($this, $file);
+        if(! empty($rules)){
+            //createValidator
+        }
         if($this->validate()){
            // $this->file->saveAs($dir . $model->file->baseName . '.' . $model->file->extension);
             $this->realname = $this->file->getBaseName();

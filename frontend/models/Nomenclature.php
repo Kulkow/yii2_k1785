@@ -22,6 +22,7 @@ use yii\web\UploadedFile;
  */
 class Nomenclature extends \yii\db\ActiveRecord
 {
+    public $image = NULL; 
     /**
      * @inheritdoc
      */
@@ -40,7 +41,7 @@ class Nomenclature extends \yii\db\ActiveRecord
             [['category_id', 'sort'], 'integer'],
             [['content'], 'string'],
             [['name', 'alias', 'price'], 'string', 'max' => 255],
-            [['image'], 'file'],
+            /*[['image'], 'file'],*/
         ];
     }
     
